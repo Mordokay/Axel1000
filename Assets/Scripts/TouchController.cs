@@ -14,6 +14,8 @@ public class TouchController : MonoBehaviour {
     public float moveSpeed = 1.0f;
     Vector3 startPos;
 
+    GameObject currentActivity;
+
     void Start()
     {
         isMoving = false;
@@ -28,14 +30,18 @@ public class TouchController : MonoBehaviour {
                 RaycastHit2D hit = Physics2D.Raycast(test, Input.GetTouch(0).position, Mathf.Infinity, 1 << LayerMask.NameToLayer("Activity"));
                 if (hit.collider)
                 {
-                    Debug.Log(hit.collider.gameObject.name);
+                    //Debug.Log(hit.collider.gameObject.name);
 
                     StartCoroutine(moveCameraToActivity(new Vector3(hit.collider.gameObject.transform.position.x,
                         hit.collider.gameObject.transform.position.y, -1.0f)));
+                    hit.collider.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+                    currentActivity = hit.collider.gameObject;
                 }
             }
-            else {
+            else if(Input.touchCount > 1)
+            {
                 StartCoroutine(moveCameraFromActivity(new Vector3(0.0f, 0.0f, -10.0f)));
+                currentActivity.GetComponent<BoxCollider2D>().enabled = true;
             }
         }
     }
